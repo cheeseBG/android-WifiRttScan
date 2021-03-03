@@ -31,6 +31,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +51,8 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
 
     private static final int SAMPLE_SIZE_DEFAULT = 50;
     private static final int MILLISECONDS_DELAY_BEFORE_NEW_RANGING_REQUEST_DEFAULT = 1000;
+    private final int NUMBER_OF_LOCATION = 3;
+    private final int COORDINATE = 2;
 
     // UI Elements.
     private TextView mSsidTextView;
@@ -57,8 +60,8 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
 
     private TextView mRangeTextView;
     private TextView mRangeMeanTextView;
-    private TextView mRangeSDTextView;
-    private TextView mRangeSDMeanTextView;
+//    private TextView mRangeSDTextView;
+//    private TextView mRangeSDMeanTextView;
     private TextView mRssiTextView;
     private TextView mSuccessesInBurstTextView;
     private TextView mSuccessRatioTextView;
@@ -66,6 +69,12 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
 
     private EditText mSampleSizeEditText;
     private EditText mMillisecondsDelayBeforeNewRangingRequestEditText;
+
+    // Added Elements by cheeseBG
+    private TextView mCoordinate1, mCoordinate2, mCoordinate3;
+    private TextView mRangeMean1, mRangeMean2, mRangeMean3;
+    private TextView mAPCoordinate;
+    private Button mLocationButton1, mLocationButton2, mLocationButton3;
 
     // Non UI variables.
     private ScanResult mScanResult;
@@ -110,8 +119,8 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
 
         mRangeTextView = findViewById(R.id.range_value);
         mRangeMeanTextView = findViewById(R.id.range_mean_value);
-        mRangeSDTextView = findViewById(R.id.range_sd_value);
-        mRangeSDMeanTextView = findViewById(R.id.range_sd_mean_value);
+//        mRangeSDTextView = findViewById(R.id.range_sd_value);
+//        mRangeSDMeanTextView = findViewById(R.id.range_sd_mean_value);
         mRssiTextView = findViewById(R.id.rssi_value);
         mSuccessesInBurstTextView = findViewById(R.id.successes_in_burst_value);
         mSuccessRatioTextView = findViewById(R.id.success_ratio_value);
@@ -124,6 +133,17 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
                 findViewById(R.id.ranging_period_edit_value);
         mMillisecondsDelayBeforeNewRangingRequestEditText.setText(
                 MILLISECONDS_DELAY_BEFORE_NEW_RANGING_REQUEST_DEFAULT + "");
+
+        // Initializes added UI elements by cheeseBG
+        mCoordinate1 = findViewById(R.id.coordinate1);
+        mCoordinate2 = findViewById(R.id.coordinate2);
+        mCoordinate3 = findViewById(R.id.coordinate3);
+
+        mRangeMean1 = findViewById(R.id.range_mean1);
+        mRangeMean2 = findViewById(R.id.range_mean2);
+        mRangeMean3 = findViewById(R.id.range_mean3);
+
+        mAPCoordinate = findViewById(R.id.ap_coordinate);
 
         // Retrieve ScanResult from Intent.
         Intent intent = getIntent();
@@ -244,9 +264,49 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
         }
     }
 
+    // Added by cheeseBG
+    // Return AP's coordinate
+    private float[] trilateration(float[][] coordinates, float[] rangeMean)
+    {
+        float[] apCoordinate = new float[COORDINATE];
+
+        float x1 = coordinates[0][0];
+        float x2 = coordinates[1][0];
+        float x3 = coordinates[2][0];
+        float y1 = coordinates[0][1];
+        float y2 = coordinates[1][1];
+        float y3 = coordinates[2][1];
+
+        float d1 = rangeMean[0];
+        float d2 = rangeMean[1];
+        float d3 = rangeMean[2];
+
+        float A = (-2 * x1) + (2 * x2);
+        float B = (-2 * y1) + (2 * y2);
+        float C = (float)(Math.pow(d1, 2) - Math.pow(d2, 2)
+                - Math.pow(x1, 2) - Math.pow(x2, 2)
+                - Math.pow(y1, 2) - Math.pow(y2, 2));
+        float D = (-2 * x2) + (2 * x3);
+        float E = (-2 * y2) + (2 * y3);
+        float F = (float)(Math.pow(d2, 2) - Math.pow(d3, 2)
+                - Math.pow(x2, 2) - Math.pow(x3, 2)
+                - Math.pow(y2, 2) - Math.pow(y3, 2));
+
+        float x = ((C * E) - (F * B)) / ((E * A) - (B * D));
+        float y = ((C * D) - (A * F)) / ((B * D) - (A * E));
+
+        apCoordinate[0] = x;
+        apCoordinate[1] = y;
+
+        return apCoordinate;
+
+    }
+
     public void onResetButtonClick(View view) {
         resetData();
     }
+
+
 
     // Class that handles callbacks for all RangingRequests and issues new RangingRequests.
     private class RttRangingResultCallback extends RangingResultCallback {
@@ -289,18 +349,22 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
                         addDistanceToHistory(rangingResult.getDistanceMm());
                         mRangeMeanTextView.setText((getDistanceMean() / 1000f) + "");
 
-                        mRangeSDTextView.setText(
-                                (rangingResult.getDistanceStdDevMm() / 1000f) + "");
-                        addStandardDeviationOfDistanceToHistory(
-                                rangingResult.getDistanceStdDevMm());
-                        mRangeSDMeanTextView.setText(
-                                (getStandardDeviationOfDistanceMean() / 1000f) + "");
+//                        mRangeSDTextView.setText(
+//                                (rangingResult.getDistanceStdDevMm() / 1000f) + "");
+//                        addStandardDeviationOfDistanceToHistory(
+//                                rangingResult.getDistanceStdDevMm());
+//                        mRangeSDMeanTextView.setText(
+//                                (getStandardDeviationOfDistanceMean() / 1000f) + "");
 
                         mRssiTextView.setText(rangingResult.getRssi() + "");
                         mSuccessesInBurstTextView.setText(
                                 rangingResult.getNumSuccessfulMeasurements()
                                         + "/"
                                         + rangingResult.getNumAttemptedMeasurements());
+
+
+                        //TODO: Button Listener
+                        
 
                         float successRatio =
                                 ((float) mNumberOfSuccessfulRangeRequests

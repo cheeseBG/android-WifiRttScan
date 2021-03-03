@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_access_point_ranging_request_margin_start"
         android:layout_marginTop="@dimen/activity_access_point_ranging_request_margin_top_title"
-        android:gravity="center_vertical"
+        android:gravity="center_horizontal"
         tools:text="SSID"
         android:textAlignment="center"
         android:textSize="@dimen/activity_access_point_ranging_request_header_text_size"
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/activity_access_point_ranging_request_margin_end"
         android:layout_marginTop="@dimen/activity_access_point_ranging_request_margin_top_title"
-        android:gravity="center_vertical"
+        android:gravity="center_horizontal"
         android:textAlignment="center"
         android:textSize="@dimen/activity_access_point_ranging_request_header_text_size"
         app:layout_constraintEnd_toEndOf="parent"
@@ -110,7 +110,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/range_value" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/range_sd_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -160,7 +160,7 @@
         android:textAlignment="textEnd"
         android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/range_sd_value" />
+        app:layout_constraintTop_toBottomOf="@+id/range_sd_value" />-->
 
     <TextView
         android:id="@+id/rssi_label"
@@ -173,7 +173,7 @@
         android:textAlignment="textStart"
         android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/range_sd_mean_label" />
+        app:layout_constraintTop_toBottomOf="@+id/range_mean_label" />
 
     <TextView
         android:id="@+id/rssi_value"
@@ -186,7 +186,7 @@
         android:textAlignment="textEnd"
         android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/range_sd_mean_value" />
+        app:layout_constraintTop_toBottomOf="@+id/range_mean_value" />
 
     <TextView
         android:id="@+id/successes_in_burst_label"
@@ -335,13 +335,204 @@
         app:layout_constraintTop_toBottomOf="@+id/stats_window_size_edit_value"
         tools:text="1000" />
 
-    <Button
-        android:id="@+id/reset_button"
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/activity_access_point_ranging_request_divider_height"
+        android:layout_marginStart="@dimen/activity_access_point_ranging_request_margin_start"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="@dimen/activity_access_point_ranging_request_margin_end"
+        android:background="?android:attr/listDivider"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stats_window_size_edit_value" />
+
+    <TextView
+        android:id="@+id/find_ap_text"
+        android:layout_width="77dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="@dimen/activity_access_point_ranging_request_margin_start"
+        android:layout_marginTop="@dimen/activity_access_point_ranging_request_margin_top"
+        android:gravity="start"
+        android:text="Find AP"
+        android:textAlignment="textStart"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+
+    <TextView
+        android:id="@+id/coordinate_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="@dimen/activity_access_point_ranging_request_margin_end"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="@dimen/activity_access_point_ranging_request_margin_top"
+        android:gravity="start"
+        android:text="Coordinate"
+        android:textAlignment="textStart"
+        android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/find_ap_text" />
+
+    <TextView
+        android:id="@+id/range_mean_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="48dp"
+        android:gravity="end"
+        android:text="Range-mean"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/find_ap_text" />
+
+
+    <Button
+        android:id="@+id/location1_btn"
+        android:layout_width="66dp"
+        android:layout_height="37dp"
         android:layout_marginStart="@dimen/activity_access_point_ranging_request_margin_start"
+        android:layout_marginTop="@dimen/activity_access_point_ranging_request_margin_top"
+        android:gravity="center_horizontal"
+        android:text="Loc1"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/coordinate_text" />
+
+    <TextView
+        android:id="@+id/coordinate1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="12dp"
+        android:gravity="end"
+        android:text="(x1, y1)"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
+        app:layout_constraintStart_toStartOf="@id/coordinate_text"
+        app:layout_constraintTop_toBottomOf="@+id/coordinate_text" />
+
+    <TextView
+        android:id="@+id/range_mean1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="end"
+        android:text="range-mean1"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
+        app:layout_constraintStart_toStartOf="@id/range_mean_text"
+        app:layout_constraintTop_toBottomOf="@+id/range_mean_text" />
+
+    <Button
+        android:id="@+id/location2_btn"
+        android:layout_width="66dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="@dimen/activity_access_point_ranging_request_margin_start"
+        android:layout_marginTop="@dimen/activity_access_point_ranging_request_margin_top"
+        android:gravity="center_horizontal"
+        android:text="Loc2"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/location1_btn" />
+
+    <TextView
+        android:id="@+id/coordinate2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="end"
+        android:text="(x2, y2)"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
+        app:layout_constraintStart_toStartOf="@id/coordinate1"
+        app:layout_constraintTop_toBottomOf="@+id/coordinate1" />
+
+    <TextView
+        android:id="@+id/range_mean2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="end"
+        android:text="range-mean2"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
+        app:layout_constraintStart_toStartOf="@id/range_mean_text"
+        app:layout_constraintTop_toBottomOf="@+id/range_mean1" />
+
+    <Button
+        android:id="@+id/location3_btn"
+        android:layout_width="66dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="@dimen/activity_access_point_ranging_request_margin_start"
+        android:layout_marginTop="@dimen/activity_access_point_ranging_request_margin_top"
+        android:gravity="center_horizontal"
+        android:text="Loc3"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/location2_btn" />
+
+    <TextView
+        android:id="@+id/coordinate3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="end"
+        android:text="(x3, y3)"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
+        app:layout_constraintStart_toStartOf="@id/coordinate2"
+        app:layout_constraintTop_toBottomOf="@+id/coordinate2" />
+
+    <TextView
+        android:id="@+id/range_mean3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="end"
+        android:text="range-mean3"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
+        app:layout_constraintStart_toStartOf="@id/range_mean_text"
+        app:layout_constraintTop_toBottomOf="@+id/range_mean2" />
+
+
+    <TextView
+        android:id="@+id/ap_locaton"
+        android:layout_width="wrap_content"
+        android:layout_height="37dp"
+        android:layout_marginStart="@dimen/activity_access_point_ranging_request_margin_start"
+        android:layout_marginTop="@dimen/activity_access_point_ranging_request_margin_top"
+        android:gravity="center_horizontal"
+        android:textSize="20dp"
+        android:text="AP LOC: "
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/location3_btn" />
+
+    <TextView
+        android:id="@+id/ap_coordinate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="end"
+        android:text="(x, y)"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/activity_access_point_ranging_request_item_text_size"
+        app:layout_constraintStart_toStartOf="@id/coordinate3"
+        app:layout_constraintTop_toBottomOf="@+id/coordinate3" />
+
+    <Button
+        android:id="@+id/reset_button"
+        android:layout_width="369dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="@dimen/activity_access_point_ranging_request_margin_start"
+        android:layout_marginEnd="@dimen/activity_access_point_ranging_request_margin_end"
+        android:layout_marginBottom="8dp"
         android:onClick="onResetButtonClick"
         android:text="@string/reset_label_activity_access_point_ranging_results"
         app:layout_constraintBottom_toBottomOf="parent"
