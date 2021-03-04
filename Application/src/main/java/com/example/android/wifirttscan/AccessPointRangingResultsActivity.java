@@ -71,10 +71,17 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
     private EditText mMillisecondsDelayBeforeNewRangingRequestEditText;
 
     // Added Elements by cheeseBG
-    private TextView mCoordinate1, mCoordinate2, mCoordinate3;
-    private TextView mRangeMean1, mRangeMean2, mRangeMean3;
-    private TextView mAPCoordinate;
+    private TextView mCoordinate1TextView, mCoordinate2TextView, mCoordinate3TextView;
+    private TextView mRangeMean1TextView, mRangeMean2TextView, mRangeMean3TextView;
+    private TextView mAPCoordinateTextView;
     private Button mLocationButton1, mLocationButton2, mLocationButton3;
+
+    // For Find AP
+    private float[][] mCoordinate = new float[NUMBER_OF_LOCATION][COORDINATE];
+    private float[] mRangeMean = new float[NUMBER_OF_LOCATION];
+    private float[] mAPCoordinate = new float[COORDINATE];
+    private int mLocBtnFlag = 0;
+    private int mResetBtnFlag = -1;
 
     // Non UI variables.
     private ScanResult mScanResult;
@@ -135,15 +142,20 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
                 MILLISECONDS_DELAY_BEFORE_NEW_RANGING_REQUEST_DEFAULT + "");
 
         // Initializes added UI elements by cheeseBG
-        mCoordinate1 = findViewById(R.id.coordinate1);
-        mCoordinate2 = findViewById(R.id.coordinate2);
-        mCoordinate3 = findViewById(R.id.coordinate3);
+        mCoordinate1TextView = findViewById(R.id.coordinate1);
+        mCoordinate2TextView = findViewById(R.id.coordinate2);
+        mCoordinate3TextView = findViewById(R.id.coordinate3);
 
-        mRangeMean1 = findViewById(R.id.range_mean1);
-        mRangeMean2 = findViewById(R.id.range_mean2);
-        mRangeMean3 = findViewById(R.id.range_mean3);
+        mRangeMean1TextView = findViewById(R.id.range_mean1);
+        mRangeMean2TextView = findViewById(R.id.range_mean2);
+        mRangeMean3TextView = findViewById(R.id.range_mean3);
 
-        mAPCoordinate = findViewById(R.id.ap_coordinate);
+        mAPCoordinateTextView = findViewById(R.id.ap_coordinate);
+
+        mLocationButton1 = findViewById(R.id.location1_btn);
+        mLocationButton2 = findViewById(R.id.location2_btn);
+        mLocationButton3 = findViewById(R.id.location3_btn);
+
 
         // Retrieve ScanResult from Intent.
         Intent intent = getIntent();
@@ -266,6 +278,7 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
 
     // Added by cheeseBG
     // Return AP's coordinate
+    //TODO: if coordinates in one line -> exception
     private float[] trilateration(float[][] coordinates, float[] rangeMean)
     {
         float[] apCoordinate = new float[COORDINATE];
@@ -302,7 +315,24 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
 
     }
 
+    // Added by cheeseBG
+    // Find Coordinate method.
+    private float[] findCoordinate(float[] coordinate, float distance, float angle)
+    {
+        float x = coordinate[0];
+        float y = coordinate[1];
+
+        // return value
+        float[] resultCoordinate = new float[2];
+
+        resultCoordinate[0] = (float)(distance * Math.cos(Math.toRadians(angle))) + x; // x result
+        resultCoordinate[1] = (float)(distance * Math.sin(Math.toRadians(angle))) + y; // y result
+
+        return resultCoordinate;
+    }
+
     public void onResetButtonClick(View view) {
+        mResetBtnFlag = mLocBtnFlag;
         resetData();
     }
 
@@ -364,6 +394,117 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
 
 
                         //TODO: Button Listener
+                        mLocationButton1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                if(mResetBtnFlag == -1){
+                                    Toast.makeText(
+                                            getApplicationContext(),
+                                            "You should click reset button first",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                                else if(mLocBtnFlag == 0){
+                                    mCoordinate[0][0] = 0; // Initialize x1
+                                    mCoordinate[0][1] = 0; // Initialize y1
+
+                                    mRangeMean[0] = getDistanceMean() / 1000f;
+
+                                    mCoordinate1TextView.setText("(" + String.format("%.2f", mCoordinate[0][0]) + ", "
+                                            + String.format("%.2f", mCoordinate[0][1]) + ")");
+                                    mRangeMean1TextView.setText(String.format("%.2f", mRangeMean[0]));
+
+                                    mLocBtnFlag = 1;
+                                }
+                                else{
+                                    Toast.makeText(
+                                            getApplicationContext(),
+                                           "Location1: already decided",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                }
+
+                            }
+                        });
+
+                        mLocationButton2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                if(mResetBtnFlag == 0){
+                                    Toast.makeText(
+                                            getApplicationContext(),
+                                            "You should click reset button first",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                                else if(mLocBtnFlag == 1){
+                                    mCoordinate[1] = findCoordinate(mCoordinate[0], 3, 90);
+
+                                    mRangeMean[1] = getDistanceMean() / 1000f;
+
+                                    mCoordinate2TextView.setText("(" + String.format("%.2f", mCoordinate[1][0]) + ", "
+                                            + String.format("%.2f", mCoordinate[1][1]) + ")");
+                                    mRangeMean2TextView.setText(String.format("%.2f", mRangeMean[1]));
+
+                                    mLocBtnFlag = 2;
+                                }
+                                else if(mLocBtnFlag == 0){
+                                    Toast.makeText(
+                                            getApplicationContext(),
+                                            "Find location1",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                                else{
+                                    Toast.makeText(
+                                            getApplicationContext(),
+                                            "Location2: already decided",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                            }
+                        });
+
+                        mLocationButton3.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                if(mResetBtnFlag == 1){
+                                    Toast.makeText(
+                                            getApplicationContext(),
+                                            "You should click reset button first",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                                else if(mLocBtnFlag == 2){
+                                    mCoordinate[2] = findCoordinate(mCoordinate[1], 3, 0);
+
+                                    mRangeMean[2] = getDistanceMean() / 1000f;
+
+                                    mCoordinate3TextView.setText("(" + String.format("%.2f", mCoordinate[2][0]) + ", "
+                                            + String.format("%.2f", mCoordinate[2][1]) + ")");
+                                    mRangeMean3TextView.setText(String.format("%.2f", mRangeMean[2]));
+
+                                    // Find AP's coordinate
+                                    mAPCoordinate = trilateration(mCoordinate, mRangeMean);
+
+                                    mAPCoordinateTextView.setText("(" + mAPCoordinate[0] + ", "
+                                            + mAPCoordinate[1] + ")");
+
+                                    mLocBtnFlag = 3;
+                                }
+                                else{
+                                    Toast.makeText(
+                                            getApplicationContext(),
+                                            "Find location1,2",
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                }
+
+                            }
+                        });
                         
 
                         float successRatio =
