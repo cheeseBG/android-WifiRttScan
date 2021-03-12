@@ -161,6 +161,8 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mScanResult = intent.getParcelableExtra(SCAN_RESULT_EXTRA);
 
+
+
         if (mScanResult == null) {
             finish();
         }
@@ -177,6 +179,7 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
         // history to calculate averages.
         mStatisticRangeHistory = new ArrayList<>();
         mStatisticRangeSDHistory = new ArrayList<>();
+
 
         resetData();
 
@@ -195,7 +198,6 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
 
         mStatisticRangeHistoryEndIndex = 0;
         mStatisticRangeHistory.clear();
-
         mStatisticRangeSDHistoryEndIndex = 0;
         mStatisticRangeSDHistory.clear();
     }
@@ -278,7 +280,6 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
 
     // Added by cheeseBG
     // Return AP's coordinate
-    //TODO: if coordinates in one line -> exception
     private float[] trilateration(float[][] coordinates, float[] rangeMean)
     {
         float[] apCoordinate = new float[COORDINATE];
@@ -325,17 +326,47 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
         // return value
         float[] resultCoordinate = new float[2];
 
+
+
+
         resultCoordinate[0] = (float)(distance * Math.cos(Math.toRadians(angle))) + x; // x result
         resultCoordinate[1] = (float)(distance * Math.sin(Math.toRadians(angle))) + y; // y result
 
         return resultCoordinate;
     }
 
+
+    // Check whether three points are in line
+    private boolean checkInLine(float[][] coordinates)
+    {
+        float[] resultCoordinate = new float[2];
+        boolean check = false;
+
+        float x1 = coordinates[0][0];
+        float x2 = coordinates[1][0];
+        float x3 = coordinates[2][0];
+        float y1 = coordinates[0][1];
+        float y2 = coordinates[1][1];
+        float y3 = coordinates[2][1];
+
+        float triangleWidth = ((x1 * y2) + (x2 * y3) + (x2 * y1)) - ((x2 * y1) + (x3 * y2) + (x1 * y3));
+
+        if (triangleWidth == 0)
+            check = true;
+        else
+            check = false;
+
+        return check;
+    }
+
+    // If checkInLine is true, find AP's coordinate with this method
+    private float findAPWithTwoPoints
+
+
     public void onResetButtonClick(View view) {
         mResetBtnFlag = mLocBtnFlag;
         resetData();
     }
-
 
 
     // Class that handles callbacks for all RangingRequests and issues new RangingRequests.
@@ -440,7 +471,7 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
                                             .show();
                                 }
                                 else if(mLocBtnFlag == 1){
-                                    mCoordinate[1] = findCoordinate(mCoordinate[0], 3, 90);
+                                    mCoordinate[1] = findCoordinate(mCoordinate[0], 1, 90);
 
                                     mRangeMean[1] = getDistanceMean() / 1000f;
 
@@ -479,7 +510,7 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
                                             .show();
                                 }
                                 else if(mLocBtnFlag == 2){
-                                    mCoordinate[2] = findCoordinate(mCoordinate[1], 3, 0);
+                                    mCoordinate[2] = findCoordinate(mCoordinate[1], 1, 0);
 
                                     mRangeMean[2] = getDistanceMean() / 1000f;
 
@@ -488,7 +519,10 @@ public class AccessPointRangingResultsActivity extends AppCompatActivity {
                                     mRangeMean3TextView.setText(String.format("%.2f", mRangeMean[2]));
 
                                     // Find AP's coordinate
-                                    mAPCoordinate = trilateration(mCoordinate, mRangeMean);
+                                    if (checkInLine(mCoordinate))
+                                        mAPCoordinate = ;
+                                    else
+                                        mAPCoordinate = trilateration(mCoordinate, mRangeMean);
 
                                     mAPCoordinateTextView.setText("(" + mAPCoordinate[0] + ", "
                                             + mAPCoordinate[1] + ")");
